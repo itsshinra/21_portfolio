@@ -42,8 +42,8 @@ jobs:
           # Create new filename with date and optional commit hash
           DATE=$(date '+%Y-%m-%d')
           COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
-          NEW_APK_NAME="21Portfoliov1($DATE).apk"
-          # Alternative with commit: NEW_APK_NAME="21Portfoliov1($DATE-$COMMIT_SHORT).apk"
+          NEW_APK_NAME="21Portfolio_v1($DATE).apk"
+          # Alternative with commit: NEW_APK_NAME="21Portfolio_v1($DATE-$COMMIT_SHORT).apk"
           NEW_APK_PATH="build/app/outputs/flutter-apk/$NEW_APK_NAME"
 
           # Rename the APK

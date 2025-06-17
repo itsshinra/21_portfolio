@@ -38,7 +38,7 @@ jobs:
           # Rename with date
           DATE=$(date '+%Y-%m-%d')
           COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
-          NEW_IPA_NAME="21Portfoliov1($DATE).ipa"
+          NEW_IPA_NAME="21Portfolio_v1($DATE).ipa"
           mv FlutterIpaExport.ipa $NEW_IPA_NAME
 
           echo "ipa_name=$NEW_IPA_NAME" >> $GITHUB_OUTPUT

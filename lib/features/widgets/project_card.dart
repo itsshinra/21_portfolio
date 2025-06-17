@@ -203,8 +203,8 @@ class ProjectCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
-                                      Color.fromARGB(255, 33, 77, 97),
-                                      Color.fromARGB(255, 15, 46, 73),
+                                      Color.fromARGB(255, 16, 49, 64),
+                                      Color.fromARGB(255, 34, 71, 103),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,

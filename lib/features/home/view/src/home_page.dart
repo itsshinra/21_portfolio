@@ -130,9 +130,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: BackgroundWidget(
         child: SingleChildScrollView(
+          // physics: ClampingScrollPhysics(),
           controller: _scrollController,
           child: Column(
             children: [

@@ -34,7 +34,10 @@ class _HeaderSectionState extends State<HeaderSection> {
           padding: const EdgeInsets.fromLTRB(20, 60, 20, 40),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color.fromARGB(255, 33, 77, 97), Color.fromARGB(255, 15, 46, 73)],
+              colors: [
+                Color.fromARGB(255, 16, 49, 64),
+                Color.fromARGB(255, 34, 71, 103),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
