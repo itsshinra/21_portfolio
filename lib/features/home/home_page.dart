@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portfolio/project_card.dart';
-import 'package:flutter_portfolio/skill_chip.dart';
+import 'package:flutter_portfolio/features/widgets/project_card.dart';
+import 'package:flutter_portfolio/features/widgets/skill_chip.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PortfolioScreen extends StatefulWidget {
-  const PortfolioScreen({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<PortfolioScreen> createState() => _PortfolioScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _PortfolioScreenState extends State<PortfolioScreen>
+class _HomePageState extends State<HomePage>
     with TickerProviderStateMixin {
   // Animation controllers and animations for the Header
   late AnimationController _headerAnimationController;
@@ -118,7 +118,6 @@ class _PortfolioScreenState extends State<PortfolioScreen>
 
   @override
   void dispose() {
-    // IMPORTANT: Dispose all controllers to prevent memory leaks!
     _headerAnimationController.dispose();
     _aboutSkillsAnimationController.dispose();
     for (final controller in _projectAnimationControllers) {
@@ -162,6 +161,35 @@ class _PortfolioScreenState extends State<PortfolioScreen>
     ];
   }
   
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.network(
+              'https://i.pinimg.com/736x/a7/64/45/a7644524e486b6641d08c1639ea99a01.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildHeader(context), 
+                _buildAboutMe(context),
+                _buildSkills(context), 
+                _buildProjects(context),
+                _buildContact(context), 
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Header Section Widget ---
   Widget _buildHeader(BuildContext context) {
     return SlideTransition(
       position: _headerSlideAnimation,
@@ -234,10 +262,10 @@ class _PortfolioScreenState extends State<PortfolioScreen>
     );
   }
 
+  // --- Social Button Section Widget ---
   Widget _buildSocialButton(Widget icon, String url) {
     return AnimatedBuilder(
-      animation:
-          _headerAnimationController,
+      animation: _headerAnimationController,
       builder: (context, child) {
         return Transform.scale(
           scale: 1.0 + (_headerAnimationController.value * 0.05),
@@ -291,7 +319,10 @@ class _PortfolioScreenState extends State<PortfolioScreen>
                     'I enjoy creating intuitive, performant, and beautiful user interfaces. '
                     'Always eager to learn new technologies and contribute to exciting projects.',
                     textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize: 16, height: 1.5, color: Colors.white,
+                    style: TextStyle(
+                      fontSize: 16,
+                      height: 1.5,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -336,7 +367,7 @@ class _PortfolioScreenState extends State<PortfolioScreen>
             opacity: _aboutSkillsAnimationController, // Uses the fade animation
             child: Container(
               padding: const EdgeInsets.all(20.0),
-             
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -394,8 +425,7 @@ class _PortfolioScreenState extends State<PortfolioScreen>
               const Divider(height: 20, thickness: 1, color: Colors.white),
               ListView.builder(
                 shrinkWrap: true,
-                physics:
-                    const NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: projects.length,
                 itemBuilder: (context, index) {
                   final project = projects[index];
@@ -405,7 +435,7 @@ class _PortfolioScreenState extends State<PortfolioScreen>
                     techStack: project['techStack']!,
                     link: project['link']!,
                     imageUrl: project['image']!,
-                    animation: _projectFadeAnimations[index], 
+                    animation: _projectFadeAnimations[index],
                   );
                 },
               ),
@@ -422,9 +452,7 @@ class _PortfolioScreenState extends State<PortfolioScreen>
       padding: const EdgeInsets.all(16),
       child: LiquidGlass(
         blur: 5,
-        shape: LiquidRoundedSuperellipse(
-          borderRadius: Radius.circular(15),
-        ),
+        shape: LiquidRoundedSuperellipse(borderRadius: Radius.circular(15)),
         settings: const LiquidGlassSettings(
           thickness: 10,
           glassColor: Color.fromARGB(26, 138, 133, 133),
@@ -472,7 +500,10 @@ class _PortfolioScreenState extends State<PortfolioScreen>
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 15,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -493,82 +524,4 @@ class _PortfolioScreenState extends State<PortfolioScreen>
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Portfolio'),
-      //   centerTitle: true,
-      //   backgroundColor: Colors.transparent,
-      //   flexibleSpace: Container(
-      //     decoration: const BoxDecoration(
-      //       gradient: LinearGradient(
-      //         colors: [Colors.blueGrey, Colors.black87],
-      //         begin: Alignment.topLeft,
-      //         end: Alignment.bottomRight,
-      //       ),
-      //     ),
-      //   ),
-      //   titleTextStyle: TextStyle(
-      //     color: Colors.white,
-      //     fontSize: 18,
-      //     fontWeight: FontWeight.bold,
-      //   ),
-      // ),
-      // body: SingleChildScrollView(
-      //   child: Column(
-      //     children: [
-      //       _buildHeader(context), // The header section
-      //       _buildAboutMe(context), // The About Me section
-      //       _buildSkills(context), // The Skills section
-      //       _buildProjects(context), // The Projects section
-      //       _buildContact(context), // The Contact section
-      //       const SizedBox(height: 20), // Add some bottom spacing
-      //     ],
-      //   ),
-      // ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network(
-              'https://i.pinimg.com/736x/a7/64/45/a7644524e486b6641d08c1639ea99a01.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Center(
-          //   child: LiquidGlass(
-          //     blur: 10,
-          //     shape: LiquidRoundedSuperellipse(
-          //       borderRadius: Radius.circular(50),
-          //     ),
-          //     settings: const LiquidGlassSettings(
-          //       thickness: 10,
-          //       glassColor: Color(0x1AFFFFFF),
-          //       lightIntensity: 1,
-          //       blend: 40,
-          //       // outlineIntensity: 0.5,
-          //     ),
-          //     child: const SizedBox(
-          //       height: 200,
-          //       width: 200,
-          //       child: Center(child: FlutterLogo(size: 100)),
-          //     ),
-          //   ),
-          // ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(context), // The header section
-                _buildAboutMe(context), // The About Me section
-                _buildSkills(context), // The Skills section
-                _buildProjects(context), // The Projects section
-                _buildContact(context), // The Contact section
-                const SizedBox(height: 20), // Add some bottom spacing
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portfolio/portfolio_screen.dart';
+import 'package:flutter_portfolio/features/home/home_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,9 +11,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Montserrat', // You can add a custom font if you like
+        fontFamily: 'Montserrat',
       ),
-      home: const PortfolioScreen(),
+      home: const HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

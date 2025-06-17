@@ -33,7 +33,7 @@ class ProjectCard extends StatelessWidget {
         settings: const LiquidGlassSettings(
           thickness: 10,
           glassColor: Color.fromARGB(179, 124, 123, 123),
-          lightIntensity: 1,          
+          lightIntensity: 1,       
         ),
         child: FadeTransition(
           opacity: animation,
