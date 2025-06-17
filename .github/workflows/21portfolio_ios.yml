@@ -1,0 +1,78 @@
+name: iOS-ipa-build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-ios:
+    name: 🎉 iOS Build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Update CocoaPods
+        run: pod repo update
+        working-directory: ios
+
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Prepare IPA
+        run: |
+          cd build/ios/iphoneos
+          mkdir Payload
+          mv Runner.app Payload/
+          zip -qq -r -9 FlutterIpaExport.ipa Payload
+
+          # Rename with date
+          DATE=$(date '+%Y-%m-%d')
+          COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
+          NEW_IPA_NAME="21Portfoliov1($DATE).ipa"
+          mv FlutterIpaExport.ipa $NEW_IPA_NAME
+
+          echo "ipa_name=$NEW_IPA_NAME" >> $GITHUB_OUTPUT
+          echo "ipa_path=build/ios/iphoneos/$NEW_IPA_NAME" >> $GITHUB_OUTPUT
+        id: ipa_info
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-ipa
+          path: ${{ steps.ipa_info.outputs.ipa_path }}
+
+      - name: Send IPA to Telegram
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Send build info message
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -d chat_id="$TELEGRAM_CHAT_ID" \
+            -d parse_mode="Markdown" \
+            -d text="🍎 *iOS Build Successful!*
+
+          📱 *App:* ${{ github.repository }}
+          📝 *Commit:* [\`$(echo ${{ github.sha }} | cut -c1-7)\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          👤 *Author:* ${{ github.actor }}
+          💬 *Message:* ${{ github.event.head_commit.message || 'Manual trigger' }}
+          ⏰ *Build Time:* $(date '+%Y-%m-%d %H:%M:%S UTC')"
+
+          # Send IPA file
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" \
+            -F chat_id="$TELEGRAM_CHAT_ID" \
+            -F document=@"build/ios/iphoneos/${{ steps.ipa_info.outputs.ipa_name }}" \
+            -F caption="📱 *${{ steps.ipa_info.outputs.ipa_name }}*
+
+          Ready to install! 🎉"

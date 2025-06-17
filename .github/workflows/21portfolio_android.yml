@@ -1,0 +1,91 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.1" # Use your Flutter version
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # - name: Run tests
+      #   run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Rename and get APK info
+        id: apk_info
+        run: |
+          # Find original APK
+          ORIGINAL_APK=$(find build/app/outputs/flutter-apk -name "*.apk" | head -1)
+
+          # Create new filename with date and optional commit hash
+          DATE=$(date '+%Y-%m-%d')
+          COMMIT_SHORT=$(echo ${{ github.sha }} | cut -c1-7)
+          NEW_APK_NAME="21Portfoliov1($DATE).apk"
+          # Alternative with commit: NEW_APK_NAME="21Portfoliov1($DATE-$COMMIT_SHORT).apk"
+          NEW_APK_PATH="build/app/outputs/flutter-apk/$NEW_APK_NAME"
+
+          # Rename the APK
+          mv "$ORIGINAL_APK" "$NEW_APK_PATH"
+
+          # Get file info
+          APK_SIZE=$(du -h "$NEW_APK_PATH" | cut -f1)
+
+          echo "apk_path=$NEW_APK_PATH" >> $GITHUB_OUTPUT
+          echo "apk_size=$APK_SIZE" >> $GITHUB_OUTPUT
+          echo "apk_name=$NEW_APK_NAME" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: ${{ steps.apk_info.outputs.apk_path }}
+
+      - name: Send APK to Telegram
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Send build info message
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -d chat_id="$TELEGRAM_CHAT_ID" \
+            -d parse_mode="Markdown" \
+            -d text="🚀 *Flutter Build Successful!*
+
+          📱 *App:* ${{ github.repository }}
+          🔥 *Branch:* main
+          📝 *Commit:* [\`$(echo ${{ github.sha }} | cut -c1-7)\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          👤 *Author:* ${{ github.actor }}
+          💬 *Message:* ${{ github.event.head_commit.message }}
+          📦 *APK Size:* ${{ steps.apk_info.outputs.apk_size }}
+          ⏰ *Build Time:* $(date '+%Y-%m-%d %H:%M:%S UTC')"
+
+          # Send APK file
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" \
+            -F chat_id="$TELEGRAM_CHAT_ID" \
+            -F document=@"${{ steps.apk_info.outputs.apk_path }}" \
+            -F caption="📱 ${{ steps.apk_info.outputs.apk_name }}
+
+          Ready to install! 🎉"
