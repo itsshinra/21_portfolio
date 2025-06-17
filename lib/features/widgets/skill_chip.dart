@@ -12,8 +12,8 @@ class SkillChip extends StatelessWidget {
         skill,
         style: const TextStyle(color: Colors.white),
       ),
-      backgroundColor: Colors.blueGrey[600],
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      backgroundColor: Color.fromARGB(255, 33, 77, 97),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
