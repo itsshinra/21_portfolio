@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HeaderSection extends StatefulWidget {
@@ -211,60 +212,67 @@ class _HeaderSectionState extends State<HeaderSection> {
         builder: (context, child) {
           return Transform.scale(
             scale: 1.0 + (widget.animationController.value * 0.05),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
+            child: LiquidGlass(
+              shape: const LiquidRoundedSuperellipse(
+                borderRadius: Radius.circular(12),
               ),
-              child: IconButton(
-                icon: _isSocialLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
+              settings: const LiquidGlassSettings(thickness: 12),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.04),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                ),
+                child: IconButton(
+                  icon: _isSocialLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
-                        ),
-                      )
-                    : icon,
-                onPressed: _isSocialLoading
-                    ? null
-                    : () async {
-                        setState(() => _isSocialLoading = true);
-                        try {
-                          final uri = Uri.parse(url);
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else {
+                        )
+                      : icon,
+                  onPressed: _isSocialLoading
+                      ? null
+                      : () async {
+                          setState(() => _isSocialLoading = true);
+                          try {
+                            final uri = Uri.parse(url);
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Could not launch $tooltip'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            debugPrint('Error launching $tooltip: $e');
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Could not launch $tooltip'),
+                                  content: Text('Error opening $tooltip'),
                                   backgroundColor: Colors.red,
                                 ),
                               );
                             }
+                          } finally {
+                            if (mounted)
+                              setState(() => _isSocialLoading = false);
                           }
-                        } catch (e) {
-                          debugPrint('Error launching $tooltip: $e');
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error opening $tooltip'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        } finally {
-                          if (mounted) setState(() => _isSocialLoading = false);
-                        }
-                      },
+                        },
+                ),
               ),
             ),
           );

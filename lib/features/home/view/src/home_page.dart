@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_portfolio/features/home/widget/widget.dart';
 
 
@@ -34,6 +35,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     _initializeAnimations();
     _startAnimations();
+    FlutterNativeSplash.remove();
+    _scrollController.addListener(_onScroll); // Add scroll listener
   }
 
   void _initializeAnimations() {
@@ -95,8 +98,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           if (mounted) {
             _aboutSkillsAnimationController.forward();
             Future.delayed(const Duration(milliseconds: 300), () {
-              for (final controller in _projectAnimationControllers) {
-                if (mounted) controller.forward();
+              // Stagger project animations
+              for (int i = 0; i < _projectAnimationControllers.length; i++) {
+                Future.delayed(Duration(milliseconds: i * 200), () {
+                  if (mounted) _projectAnimationControllers[i].forward();
+                });
               }
             });
           }
@@ -105,6 +111,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
+  void _onScroll() {
+    // Trigger project animations when projects section is visible
+    final projectsContext = _projectsKey.currentContext;
+    if (projectsContext != null) {
+      final RenderBox renderBox =
+          projectsContext.findRenderObject() as RenderBox;
+      final position = renderBox.localToGlobal(Offset.zero);
+      final screenHeight = MediaQuery.of(context).size.height;
+
+      if (position.dy < screenHeight * 0.8) {
+        // Projects section is visible, start animations if not already started
+        for (int i = 0; i < _projectAnimationControllers.length; i++) {
+          if (_projectAnimationControllers[i].status ==
+              AnimationStatus.dismissed) {
+            Future.delayed(Duration(milliseconds: i * 150), () {
+              if (mounted) _projectAnimationControllers[i].forward();
+            });
+          }
+        }
+      }
+    }
+  }
+  
   void _scrollToSection(GlobalKey key) {
     final context = key.currentContext;
     if (context != null) {
@@ -132,7 +161,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       body: BackgroundWidget(
         child: SingleChildScrollView(
-          // physics: ClampingScrollPhysics(),
+          physics: ClampingScrollPhysics(),
           controller: _scrollController,
           child: Column(
             children: [
@@ -155,12 +184,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   animationController: _aboutSkillsAnimationController,
                 ),
               ),
-              Container(
-                key: _projectsKey,
-                child: ProjectsSection(
-                  projectFadeAnimations: _projectFadeAnimations,
-                ),
-              ),
+              Container(key: _projectsKey, child: ProjectsSection()),
               Container(key: _contactKey, child: const ContactSection()),
               const SizedBox(height: 20),
             ],

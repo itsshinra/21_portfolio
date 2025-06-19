@@ -31,15 +31,13 @@ class SkillsSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: LiquidGlass(
-        blur: 8,
+        blur: 5,
         shape: const LiquidRoundedSuperellipse(
           borderRadius: Radius.circular(20),
         ),
         settings: const LiquidGlassSettings(
           thickness: 12,
-          glassColor: Color.fromARGB(40, 255, 255, 255),
-          lightIntensity: 0.8,
-          blend: 35,
+glassColor: Color.fromARGB(40, 153, 148, 148),
         ),
         child: SlideTransition(
           position: slideAnimation,
@@ -65,13 +63,19 @@ class SkillsSection extends StatelessWidget {
   Widget _buildSectionHeader(BuildContext context) {
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
+        LiquidGlass(
+          shape: const LiquidRoundedSuperellipse(
+            borderRadius: Radius.circular(10),
           ),
-          child: const Icon(Icons.code, color: Colors.white, size: 24),
+          settings: const LiquidGlassSettings(thickness: 9),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.code, color: Colors.white, size: 24),
+          ),
         ),
         const SizedBox(width: 12),
         Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 class NavigationFAB extends StatelessWidget {
   final VoidCallback onAboutPressed;
@@ -19,32 +20,72 @@ class NavigationFAB extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        FloatingActionButton.small(
-          heroTag: "about",
-          onPressed: onAboutPressed,
-          backgroundColor: Colors.white.withOpacity(0.9),
-          child: const Icon(Icons.person, color: Colors.black87),
+        LiquidGlass(
+          blur: 5,
+          shape: const LiquidRoundedSuperellipse(
+            borderRadius: Radius.circular(15),
+          ),
+          settings: const LiquidGlassSettings(
+            thickness: 12,
+            glassColor: Color.fromARGB(40, 153, 148, 148),
+          ),
+          child: FloatingActionButton.small(
+            heroTag: "about",
+            onPressed: onAboutPressed,
+            backgroundColor: Colors.transparent,
+            child: const Icon(Icons.person, color: Colors.white),
+          ),
         ),
         const SizedBox(height: 8),
-        FloatingActionButton.small(
-          heroTag: "skills",
-          onPressed: onSkillsPressed,
-          backgroundColor: Colors.white.withOpacity(0.9),
-          child: const Icon(Icons.code, color: Colors.black87),
+        LiquidGlass(
+          blur: 5,
+          shape: const LiquidRoundedSuperellipse(
+            borderRadius: Radius.circular(15),
+          ),
+          settings: const LiquidGlassSettings(
+            thickness: 12,
+            glassColor: Color.fromARGB(40, 153, 148, 148),
+          ),
+          child: FloatingActionButton.small(
+            heroTag: "skills",
+            onPressed: onSkillsPressed,
+            backgroundColor: Colors.transparent,
+            child: const Icon(Icons.code, color: Colors.white),
+          ),
         ),
         const SizedBox(height: 8),
-        FloatingActionButton.small(
-          heroTag: "projects",
-          onPressed: onProjectsPressed,
-          backgroundColor: Colors.white.withOpacity(0.9),
-          child: const Icon(Icons.work, color: Colors.black87),
+        LiquidGlass(
+          blur: 5,
+          shape: const LiquidRoundedSuperellipse(
+            borderRadius: Radius.circular(15),
+          ),
+          settings: const LiquidGlassSettings(
+            thickness: 12,
+            glassColor: Color.fromARGB(40, 153, 148, 148),
+          ),
+          child: FloatingActionButton.small(
+            heroTag: "projects",
+            onPressed: onProjectsPressed,
+            backgroundColor: Colors.transparent,
+            child: const Icon(Icons.work, color: Colors.white),
+          ),
         ),
         const SizedBox(height: 8),
-        FloatingActionButton.small(
-          heroTag: "contact",
-          onPressed: onContactPressed,
-          backgroundColor: Colors.white.withOpacity(0.9),
-          child: const Icon(Icons.email, color: Colors.black87),
+        LiquidGlass(
+          blur: 5,
+          shape: const LiquidRoundedSuperellipse(
+            borderRadius: Radius.circular(15),
+          ),
+          settings: const LiquidGlassSettings(
+            thickness: 12,
+            glassColor: Color.fromARGB(40, 153, 148, 148),
+          ),
+          child: FloatingActionButton.small(
+            heroTag: "contact",
+            onPressed: onContactPressed,
+            backgroundColor: Colors.transparent,
+            child: const Icon(Icons.email, color: Colors.white),
+          ),
         ),
       ],
     );

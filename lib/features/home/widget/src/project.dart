@@ -3,9 +3,9 @@ import 'package:flutter_portfolio/features/widgets/project_card.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 class ProjectsSection extends StatelessWidget {
-  final List<Animation<double>> projectFadeAnimations;
 
-  const ProjectsSection({super.key, required this.projectFadeAnimations});
+
+  const ProjectsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +14,13 @@ class ProjectsSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: LiquidGlass(
-        blur: 8,
+        blur: 5,
         shape: const LiquidRoundedSuperellipse(
           borderRadius: Radius.circular(20),
         ),
         settings: const LiquidGlassSettings(
           thickness: 12,
-          glassColor: Color.fromARGB(40, 255, 255, 255),
-          lightIntensity: 0.8,
-          blend: 35,
+          glassColor: Color.fromARGB(40, 153, 148, 148),
         ),
         child: Container(
           padding: const EdgeInsets.all(24.0),
@@ -42,13 +40,19 @@ class ProjectsSection extends StatelessWidget {
   Widget _buildSectionHeader(BuildContext context) {
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
+        LiquidGlass(
+          shape: const LiquidRoundedSuperellipse(
+            borderRadius: Radius.circular(10),
           ),
-          child: const Icon(Icons.work, color: Colors.white, size: 24),
+          settings: const LiquidGlassSettings(thickness: 9),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.work, color: Colors.white, size: 24),
+          ),
         ),
         const SizedBox(width: 12),
         Text(
@@ -63,23 +67,23 @@ class ProjectsSection extends StatelessWidget {
   }
 
   Widget _buildProjectsList(List<Map<String, String>> projects) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: projects.length,
-      itemBuilder: (context, index) {
-        final project = projects[index];
-        return ProjectCard(
-          title: project['title']!,
-          description: project['description']!,
-          techStack: project['techStack']!,
-          link: project['link']!,
-          imageUrl: project['image']!,
-          animation: projectFadeAnimations[index],
+    return Column(
+      children: projects.asMap().entries.map((entry) {
+        final project = entry.value;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: ProjectCard(
+            title: project['title']!,
+            description: project['description']!,
+            techStack: project['techStack']!,
+            link: project['link']!,
+            imageUrl: project['image']!,
+          ),
         );
-      },
+      }).toList(),
     );
   }
+
 
   List<Map<String, String>> _getProjectsData() {
     return [
